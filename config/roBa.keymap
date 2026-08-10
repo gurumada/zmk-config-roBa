@@ -9,7 +9,7 @@
 };
 
 &trackball {
-    automouse-layer = <4>;
+    // automouse-layer = <4>;
     scroll-layers = <5>;
 
     // arrows {
@@ -19,6 +19,7 @@
     //         <&kp LEFT_ARROW>,
     //         <&kp UP_ARROW>,
     //         <&kp DOWN_ARROW>;
+
     //     tick = <10>;
     //     wait-ms = <5>;
     //     tap-ms = <5>;
@@ -73,6 +74,12 @@
             #binding-cells = <2>;
             tapping-term-ms = <200>;
         };
+
+        encoder_scroll: encoder_scroll {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&msc SCRL_UP>, <&msc SCRL_DOWN>;
+        };
     };
 
     keymap {
@@ -80,21 +87,21 @@
 
         default_layer {
             bindings = <
-&kp Q             &kp W    &kp E         &kp R                      &kp T                                                       &kp Y         &kp U  &lt 5 I    &kp O    &kp P
-&kp A             &kp S    &kp D         &kp F                      &kp G        &to 4                           &kp APOS       &kp H         &kp J  &kp K      &kp L    &kp MINUS
-&mt LEFT_SHIFT Z  &kp X    &kp C         &kp V                      &kp B        &kp COLON                       &kp SEMICOLON  &kp N         &kp M  &kp COMMA  &kp DOT  &kp SLASH
-&kp LCTRL         &kp TAB  &kp LEFT_ALT  &lt_to_layer_0 6 LEFT_WIN  &lt 2 SPACE  &lt_to_layer_0 3 BACKSPACE      &kp ENTER      &lt 1 DELETE                             &kp GRAVE
+&kp Q             &kp W         &kp E         &kp R                        &kp T                                                          &kp Y        &kp U  &lt 5 I    &kp O    &kp P
+&kp A             &kp S         &kp D         &kp F                        &kp G        &kp LS(LG(S))                      &kp MINUS      &kp H        &kp J  &kp K      &kp L    &kp SQT
+&mt LEFT_SHIFT Z  &kp X         &kp C         &kp V                        &kp B        &kp COLON                          &kp SEMICOLON  &kp N        &kp M  &kp COMMA  &kp DOT  &kp SLASH
+&kp LCTRL         &kp LEFT_WIN  &kp LEFT_ALT  &lt_to_layer_0 6 INT_HENKAN  &lt 2 SPACE  &lt_to_layer_0 3 INT_MUHENKAN      &kp BACKSPACE  &lt 1 ENTER                             &kp DEL
             >;
 
-            sensor-bindings = <&inc_dec_kp PG_UP PAGE_DOWN>;
+            sensor-bindings = <&encoder_scroll>;
         };
 
         FUNCTION {
             bindings = <
-&kp F1   &kp F2   &kp F3   &kp F4   &kp F5                        &kp F1  &kp F2  &kp F3  &kp F4  &kp F5
-&kp F6   &kp F7   &kp F8   &kp F9   &kp F10  &trans      &kp F13  &kp F6  &kp F7  &kp F8  &kp F9  &kp F10
-&kp F11  &kp F12  &kp F13  &kp F14  &kp F15  &trans      &trans   &trans  &trans  &trans  &trans  &kp F11
-&trans   &trans   &trans   &trans   &trans   &trans      &trans   &trans                          &kp F12
+&trans  &trans  &trans  &trans  &trans                       &kp F1  &kp F2  &kp F3  &kp F4  &kp F5
+&trans  &trans  &trans  &trans  &trans  &trans      &kp F13  &kp F6  &kp F7  &kp F8  &kp F9  &kp F10
+&trans  &trans  &trans  &trans  &trans  &trans      &trans   &trans  &trans  &trans  &trans  &kp F11
+&trans  &trans  &trans  &trans  &trans  &trans      &trans   &trans                          &kp F12
             >;
         };
 
@@ -120,10 +127,10 @@
 
         MOUSE {
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &trans  &trans    &trans     &trans     &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB4  &mkp LCLK  &mkp MCLK  &mkp RCLK
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans    &trans     &trans     &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                  &trans
+&trans  &trans  &trans  &trans  &trans                      &trans  &trans    &trans    &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1  &mkp MB3  &mkp MB2  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans    &trans    &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                &trans
             >;
         };
 
