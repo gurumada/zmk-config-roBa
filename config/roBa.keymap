@@ -12,6 +12,7 @@
 
 &trackball {
     // automouse-layer = <4>;
+    /delete-property/ automouse-layer;
 
     scroll-layers = <5>;
 
