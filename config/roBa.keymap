@@ -1,5 +1,5 @@
-#include <behaviors.dtsi>
 #include <input/processors.dtsi>
+#include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/pointing.h>
@@ -20,20 +20,20 @@
  * - マウスボタン位置（N/M/,/./）ではAMLを解除しない
  * - それ以外のキーを押すとAMLを解除
  */
+
 &zip_temp_layer {
     require-prior-idle-ms = <250>;
     excluded-positions = <29 30 31 32 33>;
 };
 
-&trackball_listener {
-    input-processors = <&zip_temp_layer 4 700>;
-};
+&trackball_listener { input-processors = <&zip_temp_layer 4 700>; };
 
 &trackball {
     /*
      * PMW3610ドライバー側の旧AMLを削除します。
      * Input Processor側と二重に動作させないために必要です。
      */
+
     /delete-property/ automouse-layer;
 
     scroll-layers = <5>;
@@ -155,10 +155,10 @@
 
         MOUSE {
             bindings = <
-&trans  &trans  &trans  &trans  &trans                      &trans    &trans    &trans    &trans    &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans    &trans    &trans    &trans    &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &mkp MB4  &mkp MB1  &mkp MB3  &mkp MB2  &mkp MB5
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                                  &trans
+&trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans    &trans    &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans    &mkp MB4  &mkp MB5
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &mkp MB1  &mkp MB3  &mkp MB2
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                              &trans
             >;
 
             sensor-bindings = <&encoder_scroll>;
