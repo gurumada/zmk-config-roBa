@@ -1,9 +1,9 @@
 #include <input/processors.dtsi>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/pointing.h>
-#include <zephyr/dt-bindings/input/input-event-codes.h>
 
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 80
 
@@ -39,9 +39,7 @@
 };
 
 &trackball_listener {
-    input-processors =
-        <&zip_temp_layer 4 700>,
-        <&key_guard>;
+    input-processors = <&zip_temp_layer 4 700>, <&key_guard>;
 
     scroll_passthrough {
         layers = <5>;
@@ -152,10 +150,10 @@
 
         FUNCTION {
             bindings = <
-&kp F1  &kp F4  &kp F7  &kp F10  &trans                      &trans  &trans  &trans  &trans  &trans
-&kp F2  &kp F5  &kp F8  &kp F11  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
-&kp F3  &kp F6  &kp F9  &kp F12  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans   &trans  &trans      &trans  &trans                          &trans
+&kp F1   &kp F2   &kp F3   &kp F4   &kp F5                       &trans  &trans  &trans  &trans  &trans
+&kp F6   &kp F7   &kp F8   &kp F9   &kp F10  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+&kp F11  &kp F12  &kp F13  &kp F14  &kp F15  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+&trans   &trans   &trans   &trans   &trans   &trans      &trans  &trans                          &trans
             >;
         };
 
