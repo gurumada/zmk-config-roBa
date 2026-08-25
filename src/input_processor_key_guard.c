@@ -16,8 +16,6 @@
 #define KEY_GUARD_NODE DT_DRV_INST(0)
 #define POST_RELEASE_MS DT_PROP_OR(KEY_GUARD_NODE, post_release_ms, 500)
 
-static struct k_spinlock state_lock;
-static uint16_t pressed_count;
 static atomic_t suppressed;
 
 #if DT_NODE_HAS_PROP(KEY_GUARD_NODE, excluded_positions)
@@ -38,42 +36,19 @@ static bool is_excluded_position(uint32_t position) { return false; }
 
 static void release_suppression(struct k_work *work) {
     ARG_UNUSED(work);
-
-    k_spinlock_key_t key = k_spin_lock(&state_lock);
-    if (pressed_count == 0) {
-        atomic_set(&suppressed, 0);
-    }
-    k_spin_unlock(&state_lock, key);
+    atomic_set(&suppressed, 0);
 }
 
 K_WORK_DELAYABLE_DEFINE(release_work, release_suppression);
 
 static int key_guard_position_listener(const zmk_event_t *eh) {
     const struct zmk_position_state_changed *event = as_zmk_position_state_changed(eh);
-    if (event == NULL || is_excluded_position(event->position)) {
+    if (event == NULL || !event->state || is_excluded_position(event->position)) {
         return ZMK_EV_EVENT_BUBBLE;
     }
 
-    bool cancel_release = false;
-    bool schedule_release = false;
-    k_spinlock_key_t key = k_spin_lock(&state_lock);
-
-    if (event->state) {
-        pressed_count++;
-        atomic_set(&suppressed, 1);
-        cancel_release = true;
-    } else if (pressed_count > 0) {
-        pressed_count--;
-        schedule_release = pressed_count == 0;
-    }
-
-    k_spin_unlock(&state_lock, key);
-
-    if (cancel_release) {
-        (void)k_work_cancel_delayable(&release_work);
-    } else if (schedule_release) {
-        (void)k_work_reschedule(&release_work, K_MSEC(POST_RELEASE_MS));
-    }
+    atomic_set(&suppressed, 1);
+    (void)k_work_reschedule(&release_work, K_MSEC(POST_RELEASE_MS));
 
     return ZMK_EV_EVENT_BUBBLE;
 }
