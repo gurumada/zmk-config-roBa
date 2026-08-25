@@ -1,0 +1,15 @@
+description: Suppress relative pointer input while keyboard positions are active
+
+compatible: "gurumada,input-processor-key-guard"
+
+include: ip_zero_param.yaml
+
+properties:
+  post-release-ms:
+    type: int
+    default: 500
+    description: Suppression time after the last tracked key is released
+
+  excluded-positions:
+    type: array
+    description: Key positions that should not suppress pointer input

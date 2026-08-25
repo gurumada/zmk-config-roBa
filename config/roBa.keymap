@@ -15,7 +15,7 @@
 /*
  * Temporary Mouse Layer
  *
- * - 最後の打鍵から250ms以内はAMLを起動せず、ポインター入力も破棄
+ * - 通常キーを押している間と、最後に離してから500msはポインター入力を破棄
  * - レイヤー4をマウスレイヤーとして使用
  * - トラックボール停止後700msで解除
  * - マウス操作キーではAMLを解除しない
@@ -29,13 +29,11 @@
 
 / {
     input_processors {
-        zip_rel_blocker: zip_rel_blocker {
-            compatible = "zmk,input-processor-behaviors";
+        key_guard: key_guard {
+            compatible = "gurumada,input-processor-key-guard";
             #input-processor-cells = <0>;
-
-            type = <INPUT_EV_REL>;
-            codes = <INPUT_REL_X INPUT_REL_Y INPUT_REL_WHEEL INPUT_REL_HWHEEL>;
-            bindings = <&none &none &none &none>;
+            post-release-ms = <500>;
+            excluded-positions = <7 20 21 31 32 33>;
         };
     };
 };
@@ -43,16 +41,16 @@
 &trackball_listener {
     input-processors =
         <&zip_temp_layer 4 700>,
-        <&zip_rel_blocker>;
+        <&key_guard>;
 
     scroll_passthrough {
         layers = <5>;
-        input-processors = <&zip_scroll_scaler 1 1>;
+        input-processors = <&key_guard>, <&zip_scroll_scaler 1 1>;
     };
 
     mouse_passthrough {
         layers = <4>;
-        input-processors = <&zip_temp_layer 4 700>;
+        input-processors = <&key_guard>, <&zip_temp_layer 4 700>;
     };
 };
 
