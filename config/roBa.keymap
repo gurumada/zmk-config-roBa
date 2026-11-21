@@ -13,42 +13,27 @@
 };
 
 /*
- * Temporary Mouse Layer
- *
- * - 通常キーの入力から500msはポインター入力を破棄（連続入力で延長）
- * - レイヤー4をマウスレイヤーとして使用
- * - トラックボール停止後700msで解除
- * - マウス操作キーではAMLを解除しない
- * - それ以外のキーを押すとAMLを解除
+ * Mouse: hold the physical slash key (position 33) for layer 4.
+ * Scroll: hold I or press L+Minus together for layer 5.
+ * Pointer X/Y are suppressed unless the physical slash key is held.
+ * Wheel/scroll events remain available without holding slash.
  */
-
-&zip_temp_layer {
-    require-prior-idle-ms = <250>;
-    excluded-positions = <20 21 31 32 33>;
-};
-
 / {
     input_processors {
         key_guard: key_guard {
             compatible = "gurumada,input-processor-key-guard";
             #input-processor-cells = <0>;
-            post-release-ms = <500>;
-            excluded-positions = <7 20 21 31 32 33>;
+
         };
     };
 };
 
 &trackball_listener {
-    input-processors = <&zip_temp_layer 4 700>, <&key_guard>;
+    input-processors = <&key_guard>;
 
     scroll_passthrough {
         layers = <5>;
         input-processors = <&key_guard>, <&zip_scroll_scaler 1 1>;
-    };
-
-    mouse_passthrough {
-        layers = <4>;
-        input-processors = <&key_guard>, <&zip_temp_layer 4 700>;
     };
 };
 
@@ -94,9 +79,10 @@
             key-positions = <11 10>;
         };
 
-        double_quotation {
-            bindings = <&kp DOUBLE_QUOTES>;
+        scroll_combo {
+            bindings = <&mo 5>;
             key-positions = <20 21>;
+            timeout-ms = <100>;
         };
 
         eq {
@@ -124,6 +110,16 @@
             tapping-term-ms = <200>;
         };
 
+        slash_mouse: slash_mouse {
+            compatible = "zmk,behavior-hold-tap";
+            label = "SLASH_HOLD_MOUSE";
+            bindings = <&mo>, <&kp>;
+            #binding-cells = <2>;
+            flavor = "hold-preferred";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <0>;
+        };
+
         encoder_scroll: encoder_scroll {
             compatible = "zmk,behavior-sensor-rotate";
             #sensor-binding-cells = <0>;
@@ -140,8 +136,8 @@
         default_layer {
             bindings = <
 &kp Q             &kp W         &kp E         &kp R                 &kp T                                                       &kp Y         &kp U  &lt 5 I    &kp O    &kp P
-&kp A             &kp S         &kp D         &kp F                 &kp G        &to 4                           &kp APOS       &kp H         &kp J  &kp K      &kp L    &kp MINUS
-&mt LEFT_SHIFT Z  &kp X         &kp C         &kp V                 &kp B        &kp COLON                       &kp SEMICOLON  &kp N         &kp M  &kp COMMA  &kp DOT  &kp SLASH
+&kp A             &kp S         &kp D         &kp F                 &kp G        &none                           &kp APOS       &kp H         &kp J  &kp K      &kp L    &kp MINUS
+&mt LEFT_SHIFT Z  &kp X         &kp C         &kp V                 &kp B        &kp COLON                       &kp SEMICOLON  &kp N         &kp M  &kp COMMA  &kp DOT  &slash_mouse 4 SLASH
 &kp LCTRL         &kp LEFT_WIN  &kp LEFT_ALT  &lt_to_layer_0 6 TAB  &lt 2 SPACE  &lt_to_layer_0 3 BACKSPACE      &kp ENTER      &lt 1 DELETE                             &kp LC(SPACE)
             >;
 
@@ -180,8 +176,8 @@
         MOUSE {
             bindings = <
 &trans  &trans  &trans  &trans  &trans                      &trans  &trans  &trans    &trans    &trans
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans    &mkp MB4  &mkp MB5
-&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &mkp MB1  &mkp MB3  &mkp MB2
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB4  &mkp MB5  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &mkp MB1  &mkp MB3  &mkp MB2  &trans
 &trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans                              &trans
             >;
 
