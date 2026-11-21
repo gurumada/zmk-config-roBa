@@ -5,7 +5,6 @@
 #include <zephyr/dt-bindings/input/input-event-codes.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/atomic.h>
-#include <zephyr/sys/util.h>
 
 #include <drivers/input_processor.h>
 #include <zmk/event_manager.h>
@@ -13,42 +12,17 @@
 
 #if DT_HAS_COMPAT_STATUS_OKAY(DT_DRV_COMPAT)
 
-#define KEY_GUARD_NODE DT_DRV_INST(0)
-#define POST_RELEASE_MS DT_PROP_OR(KEY_GUARD_NODE, post_release_ms, 500)
+/* Physical M key position (0-based) in config/roBa.keymap. */
+#define M_KEY_POSITION 30
 
-static atomic_t suppressed;
-
-#if DT_NODE_HAS_PROP(KEY_GUARD_NODE, excluded_positions)
-static const uint32_t excluded_positions[] = DT_PROP(KEY_GUARD_NODE, excluded_positions);
-
-static bool is_excluded_position(uint32_t position) {
-    for (size_t i = 0; i < ARRAY_SIZE(excluded_positions); i++) {
-        if (excluded_positions[i] == position) {
-            return true;
-        }
-    }
-
-    return false;
-}
-#else
-static bool is_excluded_position(uint32_t position) { return false; }
-#endif
-
-static void release_suppression(struct k_work *work) {
-    ARG_UNUSED(work);
-    atomic_set(&suppressed, 0);
-}
-
-K_WORK_DELAYABLE_DEFINE(release_work, release_suppression);
+static atomic_t m_held;
 
 static int key_guard_position_listener(const zmk_event_t *eh) {
     const struct zmk_position_state_changed *event = as_zmk_position_state_changed(eh);
-    if (event == NULL || !event->state || is_excluded_position(event->position)) {
-        return ZMK_EV_EVENT_BUBBLE;
-    }
 
-    atomic_set(&suppressed, 1);
-    (void)k_work_reschedule(&release_work, K_MSEC(POST_RELEASE_MS));
+    if (event != NULL && event->position == M_KEY_POSITION) {
+        atomic_set(&m_held, event->state ? 1 : 0);
+    }
 
     return ZMK_EV_EVENT_BUBBLE;
 }
@@ -73,7 +47,8 @@ static int key_guard_handle_event(const struct device *dev, struct input_event *
     ARG_UNUSED(param2);
     ARG_UNUSED(state);
 
-    if (atomic_get(&suppressed) && is_pointer_event(event)) {
+    /* No cursor motion or wheel events while M is released. */
+    if (!atomic_get(&m_held) && is_pointer_event(event)) {
         event->value = 0;
     }
 
@@ -86,11 +61,12 @@ static const struct zmk_input_processor_driver_api key_guard_driver_api = {
 
 static int key_guard_init(const struct device *dev) {
     ARG_UNUSED(dev);
+    atomic_set(&m_held, 0);
     return 0;
 }
 
-#define KEY_GUARD_INST(n)                                                                          \
-    DEVICE_DT_INST_DEFINE(n, key_guard_init, NULL, NULL, NULL, POST_KERNEL,                         \
+#define KEY_GUARD_INST(n) \
+    DEVICE_DT_INST_DEFINE(n, key_guard_init, NULL, NULL, NULL, POST_KERNEL, \
                           CONFIG_KERNEL_INIT_PRIORITY_DEFAULT, &key_guard_driver_api);
 
 DT_INST_FOREACH_STATUS_OKAY(KEY_GUARD_INST)
