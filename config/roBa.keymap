@@ -133,7 +133,7 @@
 &kp Q             &kp W         &kp E         &kp R                 &kp T                                                       &kp Y         &kp U  &lt 5 I    &kp O    &kp P
 &kp A             &kp S         &kp D         &kp F                 &kp G        &none                           &kp APOS       &kp H         &kp J  &kp K      &kp L    &kp MINUS
 &mt LEFT_SHIFT Z  &kp X         &kp C         &kp V                 &kp B        &kp COLON                       &kp SEMICOLON  &kp N         &mouse_m 4 M  &kp COMMA  &kp DOT  &kp SLASH
-&kp LCTRL         &kp LEFT_WIN  &kp LEFT_ALT  &lt_to_layer_0 6 TAB  &lt 2 SPACE  &lt_to_layer_0 3 BACKSPACE      &kp ENTER      &lt 1 DELETE                             &kp LA(GRAVE)
+&kp LCTRL         &kp LEFT_WIN  &kp LEFT_ALT  &lt_to_layer_0 6 TAB  &lt 2 SPACE  &lt_to_layer_0 3 BACKSPACE      &kp ENTER      &lt 1 DELETE                             &kp LC(SPACE)
             >;
 
         };
